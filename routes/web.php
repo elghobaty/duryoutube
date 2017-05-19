@@ -12,3 +12,5 @@
 */
 
 Route::get('/', 'HomeController@index');
+Route::get('/watch', 'HomeController@index');
+Route::get('/playlist', 'HomeController@index');
