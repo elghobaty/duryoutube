@@ -1,8 +1,6 @@
-<?php namespace App\Youtube\Playlist;
+<?php namespace App\Youtube;
 
 use DateInterval;
-use App\Youtube\YoutubeRequestException;
-use App\Youtube\YouTubeAPIServiceProviderInterface;
 
 class YouTubePlaylistService
 {
@@ -26,11 +24,7 @@ class YouTubePlaylistService
      */
     public function analyze($playlistId)
     {
-        try {
-            return $this->getPlayListDurationSummary($playlistId);
-        } catch (YoutubeRequestException $e) {
-            $this->handlePlaylistException($e);
-        }
+        return $this->getPlayListDurationSummary($playlistId);
     }
 
     /**
@@ -94,30 +88,4 @@ class YouTubePlaylistService
 
         return $seconds + 60 * $minutes + 3600 * $hours;
     }
-
-    /**
-     * @param YoutubeRequestException $e
-     */
-    protected function handlePlaylistException(YoutubeRequestException $e)
-    {
-        if ($e->isBecause("playlistNotFound")) {
-            // Show playlist not found exception
-        }
-
-        // Test with private playlist?
-        // Test with deleted playlist?
-
-
-        if ($e->getCode() === 403) {
-            // forbidden or quota exceeded.
-            // display a try again later message to the user?
-            // Swap apps?
-            // Show captcha to users after x attempts in last 1 minute.
-        }
-
-
-        // Unhandled error. Notify Admin?
-    }
-
-
 }
