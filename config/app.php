@@ -177,7 +177,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        Alaouy\Youtube\YoutubeServiceProvider::class,
+        App\Providers\YoutubeServiceProvider::class,
     ],
 
     /*
