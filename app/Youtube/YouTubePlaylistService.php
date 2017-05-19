@@ -83,7 +83,7 @@ class YouTubePlaylistService
     protected function parseDuration($duration)
     {
         $hours = intval((new DateInterval($duration))->format('%H'));
-        $minutes = 60 * intval((new DateInterval($duration))->format('%i'));
+        $minutes = intval((new DateInterval($duration))->format('%i'));
         $seconds = intval((new DateInterval($duration))->format('%s'));
 
         return $seconds + 60 * $minutes + 3600 * $hours;
