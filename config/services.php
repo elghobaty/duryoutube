@@ -30,9 +30,13 @@ return [
     ],
 
     'stripe' => [
-        'model' => App\User::class,
+        'model' => '',
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
+
+    'analytics' => [
+        'code' => env('GOOGLE_ANALYTICS_CODE')
+    ]
 
 ];
