@@ -88,4 +88,18 @@ class YouTubePlaylistService
 
         return $seconds + 60 * $minutes + 3600 * $hours;
     }
+
+    /**
+     * @param $url
+     * @return string|null
+     */
+    public function parseIdFromUrl($url)
+    {
+        if (!$query = parse_url($url, PHP_URL_QUERY)) {
+            return null;
+        }
+
+        parse_str($query, $params);
+        return $params['list']?? null;
+    }
 }

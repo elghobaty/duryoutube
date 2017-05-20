@@ -7,72 +7,119 @@
     <meta name="description" content="DurYouTube helps you find the duration of any YouTube playlist.">
     <title>DurYouTube</title>
 
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url('/image/icons/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url('/image/icons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url('/image/icons/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url('/image/icons/manifest.json') }}">
+    <link rel="mask-icon" href="{{ url('/image/icons/safari-pinned-tab.svg') }}" color="#5bbad5">
+    <meta name="theme-color" content="#ffffff">
+
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat|Oswald," rel="stylesheet">
 
     <!-- Styles -->
     <style>
         html, body {
             background-color: #fff;
-            color: #636b6f;
-            font-family: 'Raleway', sans-serif;
-            font-weight: 100;
+            font-family: 'Montserrat', sans-serif;
             height: 100vh;
             margin: 0;
+            font-size: 18px;
         }
 
         .full-height {
             height: 100vh;
         }
 
-        .flex-center {
-            align-items: center;
-            display: flex;
-            justify-content: center;
-        }
-
-        .position-ref {
-            position: relative;
-        }
-
-        .top-right {
-            position: absolute;
-            right: 10px;
-            top: 18px;
-        }
-
-        .content {
-            text-align: center;
-        }
-
         .title {
-            font-size: 84px;
-        }
-
-        .links > a {
-            color: #636b6f;
-            padding: 0 25px;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: .1rem;
-            text-decoration: none;
-            text-transform: uppercase;
+            font-family: 'Oswald', cursive;
+            font-size: 40px;
+            padding: 0 120px;
         }
 
         .m-b-md {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
+
+        a, a:hover, a:active, a:focus {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        input.search {
+            display: block;
+            font-size: 18px;
+            margin: 0 auto;
+            width: 100%;
+            font-family: sans-serif;
+            box-shadow: none;
+            border-radius: 0;
+            padding: 15px 10px;
+            border: solid 5px #bb2d2d;
+            -webkit-transition: all 500ms;
+            -moz-transition: all 500ms;
+            -o-transition: all 500ms;
+            transition: all 500ms;
+        }
+
+        input.search:focus {
+            border: solid 5px #bb0000;
+            outline: none;
+            -webkit-transition: all 500ms;
+            -moz-transition: all 500ms;
+            -o-transition: all 500ms;
+            transition: all 500ms;
+        }
+
+        .submit {
+            cursor: pointer;
+            padding: 15px 40px;
+            border-color: #bb2d2d;
+            border-radius: 0;
+            font-size: 18px;
+            color: #fff;
+            background-color: #bb2d2d;
+            text-transform: uppercase;
+            -webkit-transition: all 500ms;
+            -moz-transition: all 500ms;
+            -o-transition: all 500ms;
+            transition: all 500ms;
+        }
+
+        .submit:hover {
+            margin-left: 0;
+            border-color: #bb0000;
+            border-radius: 0;
+            color: #fff;
+            background-color: #bb0000;
+            -webkit-transition: all 500ms;
+            -moz-transition: all 500ms;
+            -o-transition: all 500ms;
+            transition: all 500ms;
+        }
+
+        .submit:focus {
+            outline: none;
+            color: #ffffff;
+            -webkit-transition: all 500ms;
+            -moz-transition: all 500ms;
+            -o-transition: all 500ms;
+            transition: all 500ms;
+        }
+
     </style>
 </head>
 <body>
-<div class="flex-center position-ref full-height">
-    <div class="content">
-        <div class="title m-b-md">
-            DurYouTube
-        </div>
+<div class="full-height">
+    <div class="title m-b-md" style="text-align: center; padding: 40px 0 100px;">
+        <img src="{{ asset('images/icons/stop-clock.svg') }}" style="max-width: 75px; display: block; margin:0 auto;"/>
+        <a href="{{ url('/') }}"><span style="color:#bb0000">Dur</span>You<span style="color:#bb0000">Tube</span></a>
+    </div>
+    <div style="text-align: center; width: 50%; margin: 0 auto;">
         <form method="get">
-            <input type="text" value="" name="list" placeholder="Youtube Playlist ID"/>
-            <input type="submit" value="Submit"/>
+            <input type="text" value="" name="url" placeholder="Youtube Playlist URL or ID" class="search"/>
+            <br/>
+            <input type="submit" value="Submit" class="submit"/>
         </form>
     </div>
 </div>

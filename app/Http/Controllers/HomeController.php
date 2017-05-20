@@ -25,6 +25,15 @@ class HomeController extends Controller
             return $this->process($playlistId);
         }
 
+        if ($playlistId = request('url', null)) {
+            if (is_url($playlistId)) {
+                if (is_null($playlistId = $this->service->parseIdFromUrl($playlistId))) {
+                    return view('invalid-url');
+                }
+            }
+            return $this->process($playlistId);
+        }
+
         return view('home');
     }
 
