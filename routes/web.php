@@ -10,7 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', 'HomeController@index');
-Route::get('/watch', 'HomeController@index');
-Route::get('/playlist', 'HomeController@index');
+Route::group(['middleware' => 'throttle'], function () {
+    Route::get('/', 'HomeController@index');
+    Route::get('/watch', 'HomeController@index');
+    Route::get('/playlist', 'HomeController@index');
+});

@@ -40,12 +40,12 @@ class YouTubePlaylistService
         do {
             $playlistItems = $this->provider->getPlaylistItems($playListId, $nextPageToken, $maxResults = 50, $part = ['snippet']);
 
-            $videoIds = $this->extractVideoIdsFromPlaylist($playlistItems['results']);
-
-            $videoDurations = $this->getVideoDurationsInSeconds($videoIds);
-
-            $totalCount += count($videoDurations);
-            $totalDuration += array_sum($videoDurations);
+            if ($playlistItems['results']) {
+                $videoIds = $this->extractVideoIdsFromPlaylist($playlistItems['results']);
+                $videoDurations = $this->getVideoDurationsInSeconds($videoIds);
+                $totalCount += count($videoIds);
+                $totalDuration += array_sum($videoDurations);
+            }
 
         } while ($nextPageToken = $playlistItems['info']['nextPageToken']);
 

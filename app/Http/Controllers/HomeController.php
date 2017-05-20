@@ -28,13 +28,13 @@ class HomeController extends Controller
         if ($playlistId = request('url', null)) {
             if (is_url($playlistId)) {
                 if (is_null($playlistId = $this->service->parseIdFromUrl($playlistId))) {
-                    return view('invalid-url');
+                    return $this->displayHomepage('Playlist Not Found', 'Invalid Playlist ID');
                 }
             }
             return $this->process($playlistId);
         }
 
-        return view('home');
+        return $this->displayHomepage();
     }
 
     public function process($playlistId)
@@ -46,23 +46,26 @@ class HomeController extends Controller
 
         } catch (YoutubeRequestException $e) {
 
-            if ($e->getCode() === 403) {
-                // @todo notify admin
-                return view('try-again-later');
+            if ($e->isBecause("playlistItemsNotAccessible")) {
+                return $this->displayHomepage('Unauthorized Access.', 'We cannot access this playlist because of unauthorized access.<br /><br />Is it private?');
             }
 
             if ($e->isBecause("playlistNotFound")) {
-                return view('playlist-not-found');
+                return $this->displayHomepage('Playlist Not Found', 'Invalid Playlist URL / ID.');
             }
-            // @todo Test private & deleted playlists.
 
             // @todo notify admin
-            return view('unknown-error');
+            if ($e->getCode() === 403) {
+                return $this->displayHomepage('Temporarily Unavailable', 'Something went wrong, we are looking into it.<br />Please try again later');
+            }
+
+            // @todo notify admin
+            return $this->displayHomepage('Unexpected Error', 'An unexpected error was encountered.');
         }
 
         $count = $data['totalCount'];
         $total = $data['totalDuration'];
-        $average = $total / $count;
+        $average = $count ? $total / $count : null;
         $formattedTotal = $this->formatDuration($total);
         $formattedAverage = $this->formatDuration($average);
 
@@ -70,11 +73,19 @@ class HomeController extends Controller
     }
 
     /**
-     * @param $seconds
+     * @param int $seconds
      * @return string
      */
     protected function formatDuration($seconds)
     {
+        if (is_null($seconds)) {
+            return '<em style="color: red;">N/A</em>';
+        }
+
+        if (!$seconds) {
+            return '<em style="color: red;">0</em>';
+        }
+
         $ret = "";
 
         if ($hours = floor($seconds / 3600)) {
@@ -90,6 +101,16 @@ class HomeController extends Controller
         }
 
         return rtrim($ret, ' ,');
+    }
+
+    /**
+     * @param string $title
+     * @param string $error
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    protected function displayHomepage($title = '', $error = '')
+    {
+        return view('home', compact('title', 'error'));
     }
 
 }

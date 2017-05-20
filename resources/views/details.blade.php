@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="DurYouTube helps you find the duration of any YouTube playlist.">
 
-    <title>DurYouTube</title>
+    <title>Playlist Details - DurYouTube</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -72,8 +72,10 @@
             DurYouTube
         </div>
         <h1>Total Videos: <strong style="color: #334dff;">{{ $count }}</strong></h1>
-        <h1>Total Duration: <strong>{!! $formattedTotal !!}</strong></h1>
-        <h1>Average Duration: <strong>{!! $formattedAverage !!}</strong></h1>
+        @if($count)
+            <h1>Total Duration: <strong>{!! $formattedTotal !!}</strong></h1>
+            <h1>Average Duration: <strong>{!! $formattedAverage !!}</strong></h1>
+        @endif
     </div>
 </div>
 <script>
