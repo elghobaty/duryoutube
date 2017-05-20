@@ -69,7 +69,8 @@ class HomeController extends Controller
         $formattedTotal = $this->formatDuration($total);
         $formattedAverage = $this->formatDuration($average);
 
-        return view('details', compact('formattedTotal', 'formattedAverage', 'count'));
+        $title = 'Playlist Duration';
+        return view('details', compact('formattedTotal', 'formattedAverage', 'count', 'title'));
     }
 
     /**
