@@ -1,4 +1,4 @@
 <?php
 return [
-    'KEY' => 'AIzaSyBexaQziYimWsAekkDsqo_EIv9ZMVTabBs'
+    'KEY' => env('YOUTUBE_API_KEY')
 ];
