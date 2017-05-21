@@ -25,7 +25,7 @@
             <img src="" id="image" />
             <br />
             <br />
-            <table style="width: 100%; margin: 0 auto; text-align: center; border: 1px solid grey;" cellpadding="10">
+            <table style="width: 100%; margin: 0 auto; text-align: center; border: 1px solid grey;" cellpadding="5">
                 <tbody>
                 <tr>
                     <td style="vertical-align: middle">

@@ -62,23 +62,23 @@
             color: inherit;
         }
 
-        .title .red {
+        .title a .red {
             color: #bb0000;
         }
 
-        .title .black {
+        .title a .black {
             color: #000000;
         }
 
-        .title:hover .red {
+        .title a:hover .red {
             color: #000000;
         }
 
-        .title:hover .black {
+        .title a:hover .black {
             color: #bb0000;
         }
 
-        .title:hover svg path {
+        .title a:hover svg path {
             fill: #000000;
         }
 
@@ -179,7 +179,7 @@
 </head>
 <body>
 <div class="full-height">
-    <div class="title m-b-md" style="text-align: center; padding: 40px 0;">
+    <div class="title m-b-md" style="text-align: center; padding: 30px 0;">
         <a href="{{ url('/') }}">
             <div style="margin:0 auto;">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 355.852 355.852" style="width: 75px; height: 75px; enable-background:new 0 0 355.852 355.852;" xml:space="preserve" width="512px" height="512px">
