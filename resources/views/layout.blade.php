@@ -4,7 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="DurYouTube helps you find the duration of any YouTube playlist.">
+    <meta name="description" content="DurYouTube helps you find the total and average duration of any YouTube playlist.">
+    <meta name="keywords" content="youtube playlist duration, youtube playlist length, youtube playlist time, youtube playlist total time, youtube playlist average duration">
+    <meta name="author" content="Mohamed Elghobaty">
     <title>
         @if(isset($error)) {{ $error }} - @endif
         DurYouTube
