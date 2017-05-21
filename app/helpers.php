@@ -30,3 +30,44 @@ if (!function_exists('is_url')) {
         return preg_match($pattern, $string) > 0;
     }
 }
+
+if (!function_exists('seconds_to_time')) {
+    /**
+     * Convert number of seconds into hours, minutes and seconds
+     * and return an array containing those values
+     * @see http://codeaid.net/php/convert-seconds-to-hours-minutes-and-seconds-%28php%29
+     * @param integer $inputSeconds Number of seconds to parse
+     * @return array
+     */
+
+    function seconds_to_time($inputSeconds)
+    {
+
+        $secondsInAMinute = 60;
+        $secondsInAnHour = 60 * $secondsInAMinute;
+        $secondsInADay = 24 * $secondsInAnHour;
+
+        // extract days
+        $days = floor($inputSeconds / $secondsInADay);
+
+        // extract hours
+        $hourSeconds = $inputSeconds % $secondsInADay;
+        $hours = floor($hourSeconds / $secondsInAnHour);
+
+        // extract minutes
+        $minuteSeconds = $hourSeconds % $secondsInAnHour;
+        $minutes = floor($minuteSeconds / $secondsInAMinute);
+
+        // extract the remaining seconds
+        $remainingSeconds = $minuteSeconds % $secondsInAMinute;
+        $seconds = ceil($remainingSeconds);
+
+        // return the final array
+        return [
+            'd' => (int)$days,
+            'H' => (int)$hours,
+            'i' => (int)$minutes,
+            's' => (int)$seconds,
+        ];
+    }
+}

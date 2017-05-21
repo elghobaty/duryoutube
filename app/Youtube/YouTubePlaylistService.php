@@ -82,11 +82,12 @@ class YouTubePlaylistService
      */
     protected function parseDuration($duration)
     {
+        $days = intval((new DateInterval($duration))->format('%d'));
         $hours = intval((new DateInterval($duration))->format('%H'));
         $minutes = intval((new DateInterval($duration))->format('%i'));
         $seconds = intval((new DateInterval($duration))->format('%s'));
 
-        return $seconds + 60 * $minutes + 3600 * $hours;
+        return $seconds + 60 * $minutes + 3600 * $hours + 86400 * $days;
     }
 
     /**

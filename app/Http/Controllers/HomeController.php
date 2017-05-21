@@ -80,28 +80,17 @@ class HomeController extends Controller
     protected function formatDuration($seconds)
     {
         if (is_null($seconds)) {
-            return '<em style="color: red;">N/A</em>';
+            return '<em>N/A</em>';
         }
 
-        if (!$seconds) {
-            return '<em style="color: red;">0</em>';
-        }
+        $ret = seconds_to_time($seconds);
 
-        $ret = "";
+        $string = "<span style='color: #bb0000; font-weight: bold;'>%d</span> days, "
+            . "<span style='color: #bb0000; font-weight: bold;'>%d</span> hours, "
+            . "<span style='color: #bb0000; font-weight: bold;'>%02d</span> minutes, "
+            . "and <span style='color: #bb0000; font-weight: bold;'>%02d</span> seconds.";
 
-        if ($hours = floor($seconds / 3600)) {
-            $ret .= '<span style="color: #1a732e;">' . number_format($hours) . '</span> H, ';
-        }
-
-        if ($minutes = floor(($seconds / 60) % 60)) {
-            $ret .= '<span style="color: #ff3333;">' . sprintf("%02d", $minutes) . '</span> M, ';
-        }
-
-        if ($seconds = $seconds % 60) {
-            $ret .= '<span style="color: #334dff;">' . sprintf("%02d", $seconds) . '</span> S, ';
-        }
-
-        return rtrim($ret, ' ,');
+        return sprintf($string, $ret['d'], $ret['H'], $ret['i'], $ret['s']);
     }
 
     /**
