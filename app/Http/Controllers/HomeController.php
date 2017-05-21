@@ -61,19 +61,12 @@ class HomeController extends Controller
                 ];
             }
 
-            // @todo notify admin
-            if ($e->getCode() === 403) {
-                return [
-                    'error' => [
-                        'title' => 'Temporarily Unavailable.',
-                        'body' => 'Something went wrong, we are looking into it.<br />Please try again later.'
-                    ]
-                ];
-            }
+            app('sentry')->captureException($e);
 
+            $title = $e->getCode() === 403 ? 'Temporarily Unavailable.' : 'Something went wrong, we are looking into it.<br />Please try again later.';
             return [
                 'error' => [
-                    'title' => 'Unexpected Error.',
+                    'title' => $title,
                     'body' => 'An unexpected error was encountered.'
                 ]
             ];
