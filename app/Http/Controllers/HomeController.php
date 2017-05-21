@@ -22,55 +22,74 @@ class HomeController extends Controller
     public function index()
     {
         if ($playlistId = request('list', null)) {
-            return $this->process($playlistId);
+            return view('details', compact('playlistId'));
         }
 
         if ($playlistId = request('url', null)) {
-            if (is_url($playlistId)) {
-                if (is_null($playlistId = $this->service->parseIdFromUrl($playlistId))) {
-                    return $this->displayHomepage('Playlist Not Found', 'Invalid Playlist ID');
-                }
+            $playlistId = is_url($playlistId) ? $this->service->parseIdFromUrl($playlistId) : $playlistId;
+            if (is_null($playlistId)) {
+                return view('home', ['error' => "Invalid Playlist URL."]);
             }
-            return $this->process($playlistId);
+            return view('details', compact('playlistId'));
         }
-
-        return $this->displayHomepage();
+        return view('home');
     }
 
     public function process($playlistId)
     {
-
         try {
 
             $data = $this->service->analyze($playlistId);
 
         } catch (YoutubeRequestException $e) {
 
-            if ($e->isBecause("playlistItemsNotAccessible")) {
-                return $this->displayHomepage('Unauthorized Access.', 'We cannot access this playlist because of unauthorized access.<br /><br />Is it private?');
+            if ($e->isBecause("playlistItemsNotAccessible", "playlistForbidden")) {
+                return [
+                    'error' => [
+                        'title' => 'Unauthorized Access',
+                        'body' => 'We cannot access this playlist because of unauthorized access.<br /><br />Is it private?'
+                    ]
+                ];
             }
 
             if ($e->isBecause("playlistNotFound")) {
-                return $this->displayHomepage('Playlist Not Found', 'Invalid Playlist URL / ID.');
+                return [
+                    'error' => [
+                        'title' => 'Invalid Playlist ID.',
+                        'body' => 'Invalid Playlist URL / ID.'
+                    ]
+                ];
             }
 
             // @todo notify admin
             if ($e->getCode() === 403) {
-                return $this->displayHomepage('Temporarily Unavailable', 'Something went wrong, we are looking into it.<br />Please try again later');
+                return [
+                    'error' => [
+                        'title' => 'Temporarily Unavailable.',
+                        'body' => 'Something went wrong, we are looking into it.<br />Please try again later.'
+                    ]
+                ];
             }
 
-            // @todo notify admin
-            return $this->displayHomepage('Unexpected Error', 'An unexpected error was encountered.');
+            return [
+                'error' => [
+                    'title' => 'Unexpected Error.',
+                    'body' => 'An unexpected error was encountered.'
+                ]
+            ];
         }
 
         $count = $data['totalCount'];
         $total = $data['totalDuration'];
         $average = $count ? $total / $count : null;
-        $formattedTotal = $this->formatDuration($total);
-        $formattedAverage = $this->formatDuration($average);
 
-        $title = 'Playlist Duration';
-        return view('details', compact('formattedTotal', 'formattedAverage', 'count', 'title'));
+        return [
+            'count' => number_format($count),
+            'total' => $this->formatDuration($total),
+            'average' => $this->formatDuration($average),
+            'title' => $data['title'],
+            'image' => $data['image']
+        ];
     }
 
     /**
@@ -92,15 +111,4 @@ class HomeController extends Controller
 
         return sprintf($string, $ret['d'], $ret['H'], $ret['i'], $ret['s']);
     }
-
-    /**
-     * @param string $title
-     * @param string $error
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    protected function displayHomepage($title = '', $error = '')
-    {
-        return view('home', compact('title', 'error'));
-    }
-
 }

@@ -1,6 +1,7 @@
 <?php namespace App\Youtube;
 
 use Alaouy\Youtube\Youtube as AlaouyYoutube;
+use StdClass;
 
 class Youtube extends AlaouyYoutube implements YouTubeAPIServiceProviderInterface
 {
@@ -12,7 +13,7 @@ class Youtube extends AlaouyYoutube implements YouTubeAPIServiceProviderInterfac
      * @return array
      * @throws YoutubeRequestException
      */
-    public function getPlaylistItems($playListId, $pageToken, $maxResults = 25, array $part = [])
+    public function getPlaylistItems($playListId, $pageToken, $maxResults = 25, array $part = ['id'])
     {
         return $this->getPlaylistItemsByPlaylistId($playListId, $pageToken, $maxResults, $part);
     }
@@ -23,7 +24,7 @@ class Youtube extends AlaouyYoutube implements YouTubeAPIServiceProviderInterfac
      * @return array
      * @throws YoutubeRequestException
      */
-    public function getVideos(array $videoIds = [], array $part = [])
+    public function getVideos(array $videoIds = [], array $part = ['id'])
     {
         /**
          * @var array $ret
@@ -31,6 +32,16 @@ class Youtube extends AlaouyYoutube implements YouTubeAPIServiceProviderInterfac
         $ret = $this->getVideoInfo($videoIds, $part);
 
         return $ret;
+    }
+
+    /**
+     * @param string $id
+     * @param array $part
+     * @return StdClass
+     */
+    public function findPlaylist($id, array $part = ['id'])
+    {
+        return $this->getPlaylistById($id, $part);
     }
 
     /**

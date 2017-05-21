@@ -24,14 +24,33 @@ class YouTubePlaylistService
      */
     public function analyze($playlistId)
     {
-        return $this->getPlayListDurationSummary($playlistId);
+        /**
+         * Fetch the playlist items first to handle exceptions.
+         */
+        $items = $this->getPlaylistDurationSummary($playlistId);
+
+        return array_merge($this->getPlaylist($playlistId), $items);
+    }
+
+    /**
+     * @param $playlistId
+     * @return array
+     */
+    protected function getPlaylist($playlistId)
+    {
+        $playlist = $this->provider->findPlaylist($playlistId, $part = ['snippet']);
+
+        return [
+            'title' => $playlist->snippet->title,
+            'image' => $playlist->snippet->thumbnails->medium
+        ];
     }
 
     /**
      * @param $playListId
      * @return array
      */
-    protected function getPlayListDurationSummary($playListId)
+    protected function getPlaylistDurationSummary($playListId)
     {
         $nextPageToken = '';
         $totalCount = 0;

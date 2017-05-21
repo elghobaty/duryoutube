@@ -14,4 +14,5 @@ Route::group(['middleware' => 'throttle'], function () {
     Route::get('/', 'HomeController@index');
     Route::get('/watch', 'HomeController@index');
     Route::get('/playlist', 'HomeController@index');
+    Route::get('/process/{playlistId}', 'HomeController@process');
 });

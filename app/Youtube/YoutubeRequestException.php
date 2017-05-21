@@ -45,13 +45,14 @@ class YoutubeRequestException extends \Exception
     }
 
     /**
-     * @param string $reason
+     * @param array $reasons
      * @return bool
      */
-    public function isBecause($reason)
+    public function isBecause(...$reasons)
     {
-        return !!array_first($this->errors, function ($error) use ($reason) {
-            return $error->reason === $reason;
-        });
+        return !!array_intersect(
+            $reasons,
+            array_column($this->errors, 'reason')
+        );
     }
 }
