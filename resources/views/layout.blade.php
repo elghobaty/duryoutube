@@ -258,7 +258,7 @@
 
     function formatDuration(seconds) {
         if (!seconds && seconds !== 0) {
-            return '<em>N/A</em>';
+            return '<em style="color: #bb0000; font-weight: bold;">N/A</em>';
         }
 
         var ret = secondsToTime(seconds);
@@ -271,7 +271,7 @@
 
     function updateInformation(total, count) {
         $(".count").html(count.toLocaleString());
-        $(".average").html(isNaN(total / count) ? '<em>N/A</em>' : formatDuration(total / count));
+        $(".average").html(isNaN(total / count) ? '<em style="color: #bb0000; font-weight: bold;">N/A</em>' : formatDuration(total / count));
         $(".total").html(formatDuration(total));
     }
 
