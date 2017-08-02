@@ -40,6 +40,12 @@ class YouTubePlaylistService
     {
         $playlist = $this->provider->findPlaylist($playlistId, $part = ['snippet']);
 
+        $playlist->snippet->thumbnails->medium->url = str_replace(
+            'http://',
+            'https://',
+            $playlist->snippet->thumbnails->medium->url
+        );
+        
         return [
             'title' => $playlist->snippet->title,
             'image' => $playlist->snippet->thumbnails->medium
