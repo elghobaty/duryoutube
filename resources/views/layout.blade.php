@@ -270,9 +270,8 @@
     }
 
     function updateInformation(total, count) {
-        var average = isNaN(total / count) ? 'N/A' : (total / count);
         $(".count").html(count.toLocaleString());
-        $(".average").html(formatDuration(average));
+        $(".average").html(isNaN(total / count) ? 'N/A' : formatDuration(total / count));
         $(".total").html(formatDuration(total));
     }
 
