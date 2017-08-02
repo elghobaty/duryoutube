@@ -35,11 +35,16 @@ class HomeController extends Controller
         return view('home');
     }
 
+    /**
+     * @param $playlistId
+     * @return array
+     */
     public function process($playlistId)
     {
         try {
 
-            $data = $this->service->analyze($playlistId);
+            $playlist = $this->service->getPlaylist($playlistId);
+            $videos = $this->service->getPlaylistDurationDetails($playlistId);
 
         } catch (YoutubeRequestException $e) {
 
@@ -72,9 +77,10 @@ class HomeController extends Controller
             ];
         }
 
+        return compact('playlist', 'videos');
+
         $count = $data['totalCount'];
         $total = $data['totalDuration'];
-        $average = $count ? $total / $count : null;
 
         return [
             'count' => number_format($count),

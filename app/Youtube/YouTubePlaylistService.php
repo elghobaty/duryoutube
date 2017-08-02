@@ -36,7 +36,7 @@ class YouTubePlaylistService
      * @param $playlistId
      * @return array
      */
-    protected function getPlaylist($playlistId)
+    public function getPlaylist($playlistId)
     {
         $playlist = $this->provider->findPlaylist($playlistId, $part = ['snippet']);
 
@@ -50,14 +50,15 @@ class YouTubePlaylistService
      * @param $playListId
      * @return array
      */
-    protected function getPlaylistDurationSummary($playListId)
+    public function getPlaylistDurationSummary($playListId)
     {
         $nextPageToken = '';
         $totalCount = 0;
         $totalDuration = 0;
 
         do {
-            $playlistItems = $this->provider->getPlaylistItems($playListId, $nextPageToken, $maxResults = 50, $part = ['snippet']);
+            $playlistItems = $this->provider->getPlaylistItems($playListId, $nextPageToken, $maxResults = 50,
+                $part = ['snippet']);
 
             if ($playlistItems['results']) {
                 $videoIds = $this->extractVideoIdsFromPlaylist($playlistItems['results']);
@@ -69,6 +70,33 @@ class YouTubePlaylistService
         } while ($nextPageToken = $playlistItems['info']['nextPageToken']);
 
         return compact('totalCount', 'totalDuration');
+    }
+
+    /**
+     * @param $playListId
+     * @return array
+     */
+    public function getPlaylistDurationDetails($playListId)
+    {
+        $ret = [];
+        $nextPageToken = '';
+        do {
+            $playlistItems = $this->provider->getPlaylistItems($playListId, $nextPageToken, $maxResults = 50, $part = ['snippet']);
+
+            if ($playlistItems['results']) {
+                $videoIds = $this->extractVideoIdsFromPlaylist($playlistItems['results']);
+                $videosInfo = array_values($this->provider->getVideos($videoIds, ['contentDetails']));
+                for ($i = 0; $i < count($videosInfo); $i++) {
+                    $ret[$videosInfo[$i]->id] = [
+                        'name' => $playlistItems['results'][$i]->snippet->title,
+                        'duration' => $this->parseDuration($videosInfo[$i]->contentDetails->duration)
+                    ];
+                }
+            }
+
+        } while ($nextPageToken = $playlistItems['info']['nextPageToken']);
+
+        return $ret;
     }
 
     /**
@@ -120,6 +148,6 @@ class YouTubePlaylistService
         }
 
         parse_str($query, $params);
-        return $params['list']?? null;
+        return $params['list'] ?? null;
     }
 }

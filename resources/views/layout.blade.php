@@ -175,6 +175,21 @@
             vertical-align: middle;
         }
 
+        #video-list > tbody > tr > td {
+            padding: 10px 5px;
+            cursor: pointer;
+        }
+
+        #video-list > tbody > tr:hover > td {
+            background: rgb(232, 232, 255);
+        }
+
+        .sticky{
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -198,8 +213,8 @@
     (function (i, s, o, g, r, a, m) {
         i['GoogleAnalyticsObject'] = r;
         i[r] = i[r] || function () {
-                (i[r].q = i[r].q || []).push(arguments)
-            }, i[r].l = 1 * new Date();
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
         a = s.createElement(o),
             m = s.getElementsByTagName(o)[0];
         a.async = 1;
@@ -210,12 +225,84 @@
     ga('create', '{{ config('services.analytics.code') }}', 'auto');
     ga('send', 'pageview');
 </script>
-<script
-        src="https://code.jquery.com/jquery-3.2.1.min.js"
-        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>
+    var SECONDS_IN_MINUTE = 60;
+    var SECONDS_IN_HOUR = 60 * SECONDS_IN_MINUTE;
+    var SECONDS_IN_DAY = 24 * SECONDS_IN_HOUR;
+
+    function secondsToTime(inputSeconds) {
+        // extract days
+        var days = Math.floor(inputSeconds / SECONDS_IN_DAY);
+
+        // extract hours
+        var hourSeconds = inputSeconds % SECONDS_IN_DAY;
+        var hours = Math.floor(hourSeconds / SECONDS_IN_HOUR);
+
+        // extract minutes
+        var minuteSeconds = hourSeconds % SECONDS_IN_HOUR;
+        var minutes = Math.floor(minuteSeconds / SECONDS_IN_MINUTE);
+
+        // extract the remaining seconds
+        var remainingSeconds = minuteSeconds % SECONDS_IN_MINUTE;
+        var seconds = Math.ceil(remainingSeconds);
+
+        // return the final array
+        return {
+            'd': parseInt(days),
+            'H': parseInt(hours),
+            'i': parseInt(minutes),
+            's': parseInt(seconds)
+        };
+    }
+
+    function formatDuration(seconds) {
+        if (!seconds && seconds !== 0) {
+            return '<em>N/A</em>';
+        }
+
+        var ret = secondsToTime(seconds);
+
+        return template = "<span style='color: #bb0000; font-weight: bold;'>" + ret.d + "</span> days, "
+            + "<span style='color: #bb0000; font-weight: bold;'>" + ret.H + "</span> hours, "
+            + "<span style='color: #bb0000; font-weight: bold;'>" + (("0" + ret.i).slice(-2)) + "</span> minutes, "
+            + "and <span style='color: #bb0000; font-weight: bold;'>" + (("0" + ret.s).slice(-2)) + "</span> seconds.";
+    }
+
+    function updateInformation(total, count) {
+        var average = isNaN(total / count) ? 'N/A' : (total / count);
+        $(".count").html(count.toLocaleString());
+        $(".average").html(formatDuration(average));
+        $(".total").html(formatDuration(total));
+    }
+
     $(document).ready(function () {
+        var count = 0;
+        var total = 0;
+        var excludedVideos = [];
+        var excludedDuration = 0;
+        var $videoList = $('#video-list > tbody');
+
+        $videoList.on('click', 'td', function () {
+            var checkbox = $(this).parent().find('input').eq(0);
+            checkbox.prop("checked", !checkbox.prop("checked"));
+            checkbox.trigger('change');
+        });
+
+        $videoList.on('change', 'input', function () {
+            var id = $(this).data('videoId');
+            var index = excludedVideos.indexOf(id);
+            if (this.checked && index !== -1) {
+                excludedVideos.splice(index, 1);
+                excludedDuration -= $(this).data('duration');
+            }
+            if (!this.checked && index === -1) {
+                excludedVideos.push(id);
+                excludedDuration += $(this).data('duration');
+            }
+            updateInformation(total - excludedDuration, count - excludedVideos.length);
+        });
+
         if (typeof playlistId !== 'undefined') {
             $.get('{{ url('/process') }}/' + playlistId, function (data) {
                 $("#loading").hide();
@@ -224,17 +311,37 @@
                     $("#form").find("input[name=url]").val(playlistId);
                     $("#form").show();
                     document.title = data.error.title + ' - DurYouTube';
-                } else {
-                    $("#count").html(data.count);
-                    $("#average").html(data.average);
-                    $("#total").html(data.total);
-                    $("#title").text(data.title);
-                    $("#title").attr('href', "https://www.youtube.com/playlist?list=" + playlistId);
-                    $("#image").attr('src', data.image.url);
-                    $("#results").show();
-                    document.title = data.title + ' - DurYouTube';
+                    return;
                 }
+
+                for (var id in data.videos) {
+                    if (data.videos.hasOwnProperty(id)) {
+                        total += data.videos[id].duration;
+                        count++;
+                        $videoList.append(
+                            '<tr>' +
+                            '<td><input checked type="checkbox" data-video-id="' + id + '" data-duration="' + data.videos[id].duration + '" /></td>' +
+                            '<td>' + data.videos[id].name + '</td>' +
+                            '<td>' + formatDuration(data.videos[id].duration) + '</td>' +
+                            '</tr>'
+                        )
+                    }
+                }
+                updateInformation(total, count);
+                $("#title").text(data.playlist.title);
+                $("#title").attr('href', "https://www.youtube.com/playlist?list=" + playlistId);
+                $("#image").attr('src', data.playlist.image.url);
+                $(".results").show();
+                document.title = data.playlist.title + ' - DurYouTube';
+                $(window).bind("scroll", function () {
+                    if ($(this).scrollTop() > 100) {
+                        $("#float-summary").fadeIn();
+                    } else {
+                        $("#float-summary").fadeOut();
+                    }
+                });
             });
+
         }
     });
 </script>
